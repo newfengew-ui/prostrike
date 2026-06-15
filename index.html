@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>ProStrike - Мобильный шутер</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #ff3e3e;
+            --primary-dark: #e62e2e;
+            --secondary: #ff6b35;
+            --dark: #0a0a0a;
+            --darker: #050505;
+            --gray: #1a1a1a;
+            --light: #e0e0e0;
+            --accent: #00ff88;
+            --text: #ffffff;
+            --text-muted: #888888;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header - Compact */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.98);            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 62, 62, 0.3);
+            z-index: 1000;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            box-shadow: 0 4px 20px rgba(255, 62, 62, 0.2);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 20px;            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            background: none;
+            border: none;
+            z-index: 1001;
+        }
+
+        .mobile-menu-btn span {
+            width: 24px;
+            height: 2px;
+            background: var(--primary);
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 62, 62, 0.3);
+            padding: 20px 16px;
+            z-index: 999;
+            animation: slideDown 0.3s ease;
+        }
+
+        .mobile-nav.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 14px 0;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .mobile-nav a:hover {
+            color: var(--primary);
+            padding-left: 10px;
+        }
+
+        /* Hero Section - Optimized */
+        .hero {
+            margin-top: 56px;
+            padding: 60px 16px 40px;
+            background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(26,26,26,0.9) 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 62, 62, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            margin: 0 auto;        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255, 62, 62, 0.15);
+            border: 1px solid rgba(255, 62, 62, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 8vw, 48px);
+            margin-bottom: 12px;
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 16px;
+            margin-bottom: 28px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 62, 62, 0.3);
+            min-width: 140px;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            box-shadow: none;
+        }
+
+        .btn i {
+            font-size: 16px;
+        }
+
+        /* Section Base */
+        section {
+            padding: 50px 16px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text);
+            font-weight: 700;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            border-radius: 2px;
+        }
+
+        /* Update Section */
+        .update-section {
+            background: var(--gray);
+        }
+
+        .update-card {
+            background: linear-gradient(135deg, var(--dark) 0%, rgba(26,26,26,0.8) 100%);
+            border: 1px solid rgba(255, 62, 62, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .update-card::before {
+            content: 'NEW';
+            position: absolute;
+            top: 12px;
+            right: -30px;
+            background: linear-gradient(135deg, var(--accent), #00cc6a);
+            color: var(--dark);
+            padding: 4px 35px;
+            transform: rotate(45deg);
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        .update-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .update-header i {
+            font-size: 24px;
+        }
+        .update-content h3 {
+            color: var(--secondary);
+            margin: 20px 0 12px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .update-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .update-content li {
+            padding: 10px 0 10px 28px;
+            position: relative;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .update-content li:last-child {
+            border-bottom: none;
+        }
+
+        .update-content li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .update-content .negative li::before {
+            content: '▾';
+            color: #ff4444;
+        }
+
+        .donate-block {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(0, 136, 204, 0.1);
+            border-left: 3px solid #0088cc;
+            border-radius: 8px;
+        }
+        .donate-block p {
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .telegram-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: #0088cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .telegram-link:active {
+            transform: scale(0.96);
+        }
+
+        .telegram-link i {
+            font-size: 16px;
+        }
+
+        /* Gallery */
+        .gallery-section {
+            background: var(--darker);
+        }
+
+        .gallery-grid {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            aspect-ratio: 16/9;
+            background: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .gallery-item:active {
+            transform: scale(0.98);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--gray), var(--dark));
+            color: var(--text-muted);
+            font-size: 14px;
+            gap: 10px;
+        }
+
+        .gallery-placeholder i {
+            font-size: 40px;
+            opacity: 0.5;
+        }
+
+        /* Download Section */
+        .download-section {
+            background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 100%);
+            text-align: center;
+        }
+
+        .download-card {
+            background: linear-gradient(135deg, var(--gray) 0%, rgba(26,26,26,0.6) 100%);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 20px;
+            padding: 32px 24px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 12px 40px rgba(255, 107, 53, 0.15);
+        }
+
+        .download-icon {            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .download-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .download-card h3 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .download-card > p {
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+            margin-bottom: 20px;
+        }
+        .download-btn:active {
+            transform: scale(0.97);
+        }
+
+        .download-btn i {
+            font-size: 24px;
+        }
+
+        .file-info {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        .file-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .file-info i {
+            color: var(--secondary);
+            font-size: 16px;
+            width: 20px;
+        }
+
+        .warning-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px;
+            background: rgba(255, 107, 53, 0.1);
+            border-radius: 8px;
+        }
+
+        .warning-text i {
+            color: var(--secondary);
+        }
+
+        /* Support Section */
+        .support-section {
+            background: var(--gray);        }
+
+        .support-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .support-card {
+            background: linear-gradient(135deg, var(--dark) 0%, rgba(26,26,26,0.8) 100%);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 14px;
+            padding: 24px 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .support-card:active {
+            transform: scale(0.98);
+        }
+
+        .support-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 14px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .support-icon i {
+            font-size: 28px;
+            color: var(--accent);
+        }
+
+        .support-card h3 {
+            margin-bottom: 8px;
+            color: var(--text);
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .support-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;            line-height: 1.5;
+        }
+
+        .support-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--accent);
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .support-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            border-top: 1px solid rgba(255, 62, 62, 0.2);
+            padding: 32px 16px 24px;
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .social-links a {
+            width: 44px;
+            height: 44px;
+            border: 1px solid rgba(0, 136, 204, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0088cc;
+            font-size: 18px;
+            transition: all 0.3s;
+            text-decoration: none;            background: rgba(0, 136, 204, 0.05);
+        }
+
+        .social-links a:active {
+            background: #0088cc;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin: 6px 0;
+        }
+
+        .footer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: rgba(255, 62, 62, 0.1);
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 100%;
+            max-height: 100%;            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-close:active {
+            background: var(--primary);
+            transform: scale(0.9);
+        }
+
+        /* Scanlines - Subtle */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.03) 50%,
+                rgba(0,0,0,0.03)
+            );
+            background-size: 100% 3px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* Responsive - Tablet */
+        @media (min-width: 768px) {            .mobile-menu-btn,
+            .mobile-nav {
+                display: none !important;
+            }
+
+            .nav-links {
+                display: flex !important;
+            }
+
+            .support-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .hero {
+                padding: 80px 24px 60px;
+            }
+
+            section {
+                padding: 70px 24px;
+            }
+        }
+
+        /* Hide desktop nav on mobile */
+        @media (max-width: 767px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+
+        /* Utilities */
+        .text-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Smooth animations */
+        @media (prefers-reduced-motion: no-preference) {
+            * {
+                scroll-behavior: smooth;
+            }
+        }
+    </style>
+</head>
+<body>    <div class="scanlines"></div>
+    
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="logo.png" alt="ProStrike" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-crosshairs\' style=\'color: white; font-size: 18px;\'></i>';">
+                    </div>
+                    <span class="logo-text">PROSTRIKE</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Главная</a></li>
+                    <li><a href="#update">Обновление</a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#download">Скачать</a></li>
+                    <li><a href="#support">Поддержка</a></li>
+                </ul>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#home">Главная</a>
+        <a href="#update">Обновление</a>
+        <a href="#gallery">Галерея</a>
+        <a href="#download">Скачать</a>
+        <a href="#support">Поддержка</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-fire"></i>
+                <span>V2 1.0 Уже доступна</span>
+            </div>
+            <h1>PROSTRIKE</h1>
+            <p>Лучший тактический шутер на мобильных устройствах. Присоединяйся к миллионам игроков!</p>
+            <div class="btn-group">
+                <a href="#download" class="btn">
+                    <i class="fas fa-play"></i>
+                    Играть сейчас                </a>
+                <a href="#update" class="btn btn-outline">
+                    <i class="fas fa-newspaper"></i>
+                    Что нового
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Update Section -->
+    <section class="update-section" id="update">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-fire-alt text-gradient"></i>
+                Последнее обновление
+            </h2>
+            <div class="update-card">
+                <div class="update-header">
+                    <i class="fas fa-rocket"></i>
+                    <span>Возвращение ProStrike V2 1.0</span>
+                </div>
+                <div class="update-content">
+                    <h3><i class="fas fa-fire"></i> Что нового:</h3>
+                    <ul>
+                        <li>Новая коллекция Spring 2026</li>
+                        <li>Новая карта "AWP GONY"</li>
+                        <li>Новый кейс Snowy</li>
+                        <li>Новая карта миража "Mirage FPS"</li>
+                        <li>Новое оружие "Negev"</li>
+                        <li>Отображение наигранных часов в профиле</li>
+                        <li>Изменения мувмента (стрейфы)</li>
+                        <li>Новая качественная отдача</li>
+                        <li>Изменен дизайн</li>
+                        <li>Исправление некоторых багов</li>
+                        <li>И множество других технических изменений</li>
+                    </ul>
+
+                    <h3><i class="fas fa-exclamation-triangle"></i> Из минусов:</h3>
+                    <ul class="negative">
+                        <li>Временно убрали режим зб на технические работы</li>
+                    </ul>
+
+                    <div class="donate-block">
+                        <p><strong>💰 Бот для доната:</strong></p>
+                        <a href="https://t.me/prostrikeofficialdonatebot" target="_blank" class="telegram-link">
+                            <i class="fab fa-telegram-plane"></i>
+                            @prostrikeofficialdonatebot
+                        </a>
+                    </div>
+                </div>            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section" id="gallery">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-images text-gradient"></i>
+                Галерея
+            </h2>
+            <div class="gallery-grid">
+                <div class="gallery-item" onclick="openLightbox('screenshot1.jpg')">
+                    <img src="screenshot1.jpg" alt="ProStrike Gameplay" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'gallery-placeholder\'><i class=\'fas fa-image\'></i><span>Скриншот скоро</span></div>';">
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 20px; color: var(--text-muted); font-size: 13px; font-style: italic;">
+                Больше скриншотов скоро...
+            </p>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="download-section" id="download">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-download text-gradient"></i>
+                Скачать игру
+            </h2>
+            <div class="download-card">
+                <div class="download-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <h3>ProStrike V2 1.0</h3>
+                <p>Начни играть прямо сейчас!</p>
+                
+                <a href="ProStrike_V2.apk" download class="download-btn" onclick="handleDownload()">
+                    <i class="fab fa-android"></i>
+                    <span>Скачать для Android</span>
+                </a>
+                
+                <div class="file-info">
+                    <p>
+                        <i class="fas fa-file-archive"></i>
+                        <span><strong>Файл:</strong> ProStrike_V2.apk</span>
+                    </p>
+                    <p>
+                        <i class="fas fa-hdd"></i>
+                        <span><strong>Размер:</strong> 0.98 GB</span>
+                    </p>                    <p>
+                        <i class="fab fa-android"></i>
+                        <span><strong>Требуется:</strong> Android 10+</span>
+                    </p>
+                </div>
+                
+                <p class="warning-text">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Разрешите установку из неизвестных источников</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Section -->
+    <section class="support-section" id="support">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-headset text-gradient"></i>
+                Поддержка
+            </h2>
+            <div class="support-grid">
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <h3>Сообщить о баге</h3>
+                    <p>Нашли ошибку? Сообщите нам и мы исправим её</p>
+                    <a href="https://t.me/menegerprostrike?text=Здравствуйте!%20У%20меня%20вопрос/проблема:%20" target="_blank" class="support-btn">
+                        <i class="fab fa-telegram-plane"></i>
+                        Написать
+                    </a>
+                </div>
+                
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3>Задать вопрос</h3>
+                    <p>Есть вопросы? Наша поддержка готова помочь</p>
+                    <a href="https://t.me/menegerprostrike?text=Здравствуйте!%20У%20меня%20вопрос:%20" target="_blank" class="support-btn">
+                        <i class="fab fa-telegram-plane"></i>
+                        Написать
+                    </a>
+                </div>
+                
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>                    <h3>Донат</h3>
+                    <p>Поддержите разработку и получите бонусы</p>
+                    <a href="https://t.me/prostrikeofficialdonatebot" target="_blank" class="support-btn">
+                        <i class="fas fa-donate"></i>
+                        Поддержать
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="social-links">
+            <a href="https://t.me/darlogprostrike" target="_blank" aria-label="Telegram канал">
+                <i class="fab fa-telegram-plane"></i>
+            </a>
+        </div>
+        <p>© 2026 ProStrike. Все права защищены.</p>
+        <div class="footer-badge">
+            <i class="fas fa-shield-alt"></i>
+            Official Game Website
+        </div>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+        <img src="" alt="Fullscreen" id="lightbox-img">
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const header = document.getElementById('header');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking a link
+        mobileNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.classList.remove('active');
+                mobileNav.classList.remove('active');
+            });        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth Scroll with offset
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const headerOffset = 70;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Lightbox
+        function openLightbox(imageSrc) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = imageSrc;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(event) {
+            if (event.target.classList.contains('lightbox') || event.target.closest('.lightbox-close')) {
+                const lightbox = document.getElementById('lightbox');
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close lightbox with Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const lightbox = document.getElementById('lightbox');                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Download handler
+        function handleDownload() {
+            setTimeout(() => {
+                alert('🎮 Загрузка началась!\n\nФайл сохранится в папке "Загрузки"');
+            }, 500);
+        }
+
+        // Active nav link on scroll
+        const sections = document.querySelectorAll('section[id]');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Console Easter Egg
+        console.log('%c PROSTRIKE ', 'background: linear-gradient(135deg, #ff3e3e, #ff6b35); color: white; font-size: 24px; font-weight: bold; padding: 10px; border-radius: 5px;');
+        console.log('%c Official Website v2.1.0 ', 'background: #1a1a1a; color: #ff6b35; font-size: 12px; padding: 5px; border-radius: 3px;');
+    </script>
+</body>
+</html>
